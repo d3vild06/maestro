@@ -11,6 +11,7 @@
   "author": "Joe Turner <jturner@thinkful.com>",
   "license": "MIT",
   "dependencies": {
+    "mongoose": "^4.8.4",
     "npm-run-all": "^4.0.1"
   }
 }
