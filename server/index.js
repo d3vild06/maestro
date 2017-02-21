@@ -26,7 +26,7 @@ passport.use(
         callbackURL: `${config.ROOT}/auth/google/callback`
     },
     (accessToken, refreshToken, profile, cb) => {
-        // Job 1: Set up Mongo/Mongoose, create a User model which store the
+        // Job 1: Set up Mongo/Mongoose, create a User model which stores the
         // google id, and the access token
         // Job 2: Update this callback to either update or create the user
         // so it contains the correct access token
@@ -41,7 +41,7 @@ passport.use(
 passport.use(
     new BearerStrategy(
         (token, done) => {
-            // Job 3: Update this callback to try to find a user with a 
+            // Job 3: Update this callback to try to find a user with a
             // matching access token.  If they exist, let em in, if not,
             // don't.
             if (!(token in database)) {
