@@ -2,10 +2,11 @@ const express = require('express');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
+const mongoose = require('mongoose');
+require('dotenv').config();
+const User = require('./models/user');
 
 const config = require('./config');
-const secret = require('./secret');
-
 const app = express();
 
 const database = {
@@ -21,33 +22,32 @@ app.use(passport.initialize());
 
 passport.use(
     new GoogleStrategy({
-        clientID:  '689026946763-rtsrhg52nra9oai4tk7gb05fs8f1t43l.apps.googleusercontent.com',
-        clientSecret: secret,
+        clientID:  process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: `${config.ROOT}/auth/google/callback`
     },
     (accessToken, refreshToken, profile, cb) => {
-        // Job 1: Set up Mongo/Mongoose, create a User model which store the
-        // google id, and the access token
-        // Job 2: Update this callback to either update or create the user
-        // so it contains the correct access token
-        const user = database[accessToken] = {
-            googleId: profile.id,
-            accessToken: accessToken
-        };
-        return cb(null, user);
+      console.log('google profile: ', profile);
+      User.findOrCreate({ googleId: profile.id, firstName: profile.name.givenName, lastName: profile.name.familyName, displayName: profile.displayName, token: accessToken },
+        function(err, user) {
+          if (err) {
+            return cb(err)
+          }
+          return cb(null, user);
+        });
     }
 ));
 
 passport.use(
     new BearerStrategy(
         (token, done) => {
-            // Job 3: Update this callback to try to find a user with a 
-            // matching access token.  If they exist, let em in, if not,
-            // don't.
-            if (!(token in database)) {
-                return done(null, false);
+          User.findOne({token: token}, function(err, user) {
+            if (err) {
+              return done(err);
             }
-            return done(null, database[token]);
+            if (!user) { return done(null, false); }
+            return done(null, user, { scope: 'all'});
+          });
         }
     )
 );
@@ -61,7 +61,7 @@ app.get('/auth/google/callback',
         session: false
     }),
     (req, res) => {
-        res.cookie('accessToken', req.user.accessToken, {expires: 0});
+        res.cookie('accessToken', req.user.token, {expires: 0});
         res.redirect(`${config.CLIENT_ROOT}`);
     }
 );
@@ -85,28 +85,40 @@ app.get('/api/questions',
 );
 
 let server;
-function runServer(host, port) {
+function runServer(dbUrl, host, port) {
     return new Promise((resolve, reject) => {
+      mongoose.connect(dbUrl, err => {
+        if (err) {
+          return reject(err);
+        }
         server = app.listen(port, host, () => {
             console.log(`Server running on ${host}:${port}`);
             resolve();
-        }).on('error', reject);
+        })
+        .on('error', err => {
+          mongoose.disconnect();
+          reject(err);
+        });
     });
+  });
 }
 
 function closeServer() {
-    return new Promise((resolve, reject) => {
-        server.close(err => {
-            if (err) {
-                return reject(err);
-            }
-            resolve();
-        });
-    });
+  return mongoose.disconnect().then(() => {
+     return new Promise((resolve, reject) => {
+       console.log('Closing server');
+       server.close(err => {
+           if (err) {
+               return reject(err);
+           }
+           resolve();
+       });
+     });
+  });
 }
 
 if (require.main === module) {
-    runServer(config.HOST, config.PORT);
+    runServer(config.DB_URL, config.HOST, config.PORT);
 }
 
 module.exports = {
