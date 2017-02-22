@@ -35,23 +35,13 @@ passport.use(
           }
           return cb(null, user);
         });
-        // Job 1: Set up Mongo/Mongoose, create a User model which store the
-        // google id, and the access token
-        // Job 2: Update this callback to either update or create the user
-        // so it contains the correct access token
-
-        // const user = database[accessToken] = {
-        //     googleId: profile.id,
-        //     accessToken: accessToken
-        // };
-        // return cb(null, user);
     }
 ));
 
 passport.use(
     new BearerStrategy(
         (token, done) => {
-          User.find({token: token}, function(err, user) {
+          User.findOne({token: token}, function(err, user) {
             if (err) {
               return done(err);
             }
@@ -71,7 +61,7 @@ app.get('/auth/google/callback',
         session: false
     }),
     (req, res) => {
-        res.cookie('accessToken', req.user.accessToken, {expires: 0});
+        res.cookie('accessToken', req.user.token, {expires: 0});
         res.redirect(`${config.CLIENT_ROOT}`);
     }
 );
