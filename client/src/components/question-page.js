@@ -1,35 +1,39 @@
 import React from 'react';
-import * as Cookies from 'js-cookie';
-import {SERVER_ROOT} from '../config';
+import {connect} from 'react-redux';
+import * as actions from '../actions/actions';
 
-export default class QuestionPage extends React.Component {
+export class QuestionPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            questions: []
-        };
+        // this.state = {
+        //     questions: []
+        // };
     }
 
     componentDidMount() {
-        const accessToken = Cookies.get('accessToken');
-        fetch(`${SERVER_ROOT}/api/questions`, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            }).then(res => {
-            if (!res.ok) {
-                throw new Error(res.statusText);
-            }
-            return res.json();
-        }).then(questions =>
-            this.setState({
-                questions
-            })
+        this.props.dispatch(
+          actions.fetchQuestions()
         );
+        // const accessToken = Cookies.get('accessToken');
+        // fetch(`${SERVER_ROOT}/api/questions`, {
+        //         headers: {
+        //             'Authorization': `Bearer ${accessToken}`
+        //         }
+        //     }).then(res => {
+        //     if (!res.ok) {
+        //         throw new Error(res.statusText);
+        //     }
+        //     return res.json();
+        // }).then(questions =>
+        //     this.setState({
+        //         questions
+        //     })
+        // );
+
     }
 
     render() {
-        const questions = this.state.questions.map((question, index) =>
+        const questions = this.props.questionArray.map((question, index) =>
             <li key={index}>{question}</li>
         );
 
@@ -40,3 +44,5 @@ export default class QuestionPage extends React.Component {
         );
     }
 }
+
+export default connect(mapStateToProps)(QuestionPage);
