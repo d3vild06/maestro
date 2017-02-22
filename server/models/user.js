@@ -8,7 +8,16 @@ const userSchema = Schema({
   lastName: String,
   displayName: String,
   email: String,
-  token: String
+  token: String,
+  currentQuestions: [
+    { id: {type: Schema.Types.ObjectId,
+      ref: 'Question', required: true },
+      mValue: {type: Number, required: true, default: 1},
+      correctCount: {type: Number, default: 0},
+      dateAnswered: {type: Date}
+    }
+  ],
+  previousQuestions: []
 });
 
 userSchema.plugin(findOrCreate);

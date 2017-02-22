@@ -83,6 +83,14 @@ app.get('/api/me',
         googleId: req.user.googleId
     })
 );
+// { userId: googleId, questions: []}
+app.post('/api/batchanswers', passport.authenticate('bearer', {session: false}), (req, res) => {
+  const { userId, questions } = req.body;
+  if (!userId || !questions) {
+    res.status(400).json({success: false, message: 'missing fields'})
+  }
+  User.find({googleId: userId})
+});
 
 app.get('/api/questions', passport.authenticate('bearer', {session: false}), (req, res) => {
       Question.find({})
