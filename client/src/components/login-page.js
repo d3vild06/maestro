@@ -12,7 +12,7 @@ render() {
       <h1>Learn Spanish with Maestro</h1>
       <a href={`${SERVER_ROOT}/auth/google`}>Vamos con Google!!</a>
 
-      </div>
+    </div>
 
       )
       }

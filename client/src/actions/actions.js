@@ -14,7 +14,7 @@ export const fetchSuccessCurrentUser = (currentUser) => ({type: FETCH_SUCCESS_CU
 export const FETCH_ERROR_CURRENT_USER = 'FETCH_ERROR_CURRENT_USER'
 export const fetchErrorCurrentUser = (currentUser, error) => ({type: FETCH_ERROR_CURRENT_USER, currentUser, error})
 
-export const fetchCurrentUser = (dispatch) => {
+export const fetchCurrentUser = () => dispatch => {
     const accessToken = Cookies.get('accessToken')
     fetch(`${SERVER_ROOT}/api/me`, {
         headers: {
@@ -34,10 +34,10 @@ export const fetchCurrentUser = (dispatch) => {
     .then(currentUser => {
         dispatch(fetchSuccessCurrentUser(currentUser))
     })
-    // .catch(error => dispatch(fetchErrorCurrentUser(error)))
+    .catch(error => dispatch(fetchErrorCurrentUser(error)))
 
 }
-export const fetchQuestions = (dispatch) => {
+export const fetchQuestions = () => dispatch => {
     const accessToken = Cookies.get('accessToken');
 
     return fetch(`${SERVER_ROOT}/api/questions`, {
