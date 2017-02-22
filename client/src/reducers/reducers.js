@@ -1,19 +1,19 @@
 import * as actions from '../actions/actions';
 
-const initalState = {
+const initialState = {
   displayName: '',
   questions: [],
-  currentUser: null;
-}
+  currentUser: null
+};
 
 export const appReducer = (state = initialState, action) => {
-  if (action.type === actions.FETCH_SUCCESS) {
-    let questionArray = questions.questions;
+  if (action.type === 'FETCH_SUCCESS') {
+    let questionArray = action.questions;
     state = Object.assign({}, state, {questions:questionArray})
     return state;
   }
-  if (action.type === actions.FETCH_SUCCESS_CURRENT_USER) {
-      let user = currentUser.currentUser;
+  if (action.type === 'FETCH_SUCCESS_CURRENT_USER') {
+      let user = action.currentUser;
       state = Object.assign({},state, {currentUser:user})
       return state;
   }

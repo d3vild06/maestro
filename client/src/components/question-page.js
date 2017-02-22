@@ -38,11 +38,16 @@ export class QuestionPage extends React.Component {
         );
 
         return (
-            <ul className="question-list">
-                {questions}
-            </ul>
+          <ul className="question-list">
+            {questions}
+          </ul>
         );
     }
+}
+const mapStateToProps = (state, props) => {
+  return {
+    questionArray: state.questions,
+  }
 }
 
 export default connect(mapStateToProps)(QuestionPage);
