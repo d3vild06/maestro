@@ -3,13 +3,13 @@ import * as Cookies from 'js-cookie';
 import * as actions from '../actions/actions'
 import QuestionPage from './question-page';
 import LoginPage from './login-page';
-import {SERVER_ROOT} from '../config';
+// import {SERVER_ROOT} from '../config';
 import {connect} from 'react-redux';
 
 export class App extends React.Component {
     constructor(props) {
         super(props);
-        
+
     }
 
     componentDidMount() {

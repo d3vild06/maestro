@@ -19,33 +19,39 @@ submitAnswer(event) {
 
 
     render() {
-        const questions = this.props.questionArray.map((question, index) => <li key={index}>{question.question}</li>);
+      const firstQuestion = this.props.questions
+      console.log(this.props.questions.questions)
+        // const questions = this.props.questionArray.map((question, index) => <li key={index}>{question.question}</li>);
 
         const answerInput = <form className="answerInput" onSubmit={this.submitAnswer}>
           <input type="text" id="form-text" placeholder="Your Answer" ref="input" required/>
           <input type="submit" name="submit answer" value="Submit"/>
         </form>
-        console.log(this.props.questionArray)
+
         return (
             <div>
               <h2 className="current-word">
                 Current Word
               </h2>
+
+              {/* <p> Question: {questionCounter} of {totalQuestionNum} </p> */}
+
               <ul className="question-list">
-                {questions}
+                {firstQuestion}
               </ul>
               {/*conditionally render score here */}
               <h2 className="answer">
-                Answer
-              </h2>
-              {/*conditionally render correct answer IF input answer !== question answer*/}
+                      Answer
+                    </h2>
+                  {/*conditionally render correct answer IF input answer !== question answer*/}
                   {answerInput}
-                </div>
-                );
+                  </div>
+                  );
                 }
                 }
 
                 const mapStateToProps = (state, props) => {
-                  return {questionArray: state.questions}
+                  return {questions: state.questions,
+                  }
                 }
                 export default connect(mapStateToProps)(QuestionPage);

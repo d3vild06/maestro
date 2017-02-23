@@ -28,8 +28,10 @@ export const answerSubmit = (answer) => ({type: ANSWER_SUBMIT, answer})
 // }
 
 
-export const fetchCurrentUser = () => dispatch => {
+export const fetchCurrentUser = () => (dispatch, getState) => {
     const accessToken = Cookies.get('accessToken')
+        const {currentUser} = getState();
+        console.log(currentUser)
     fetch(`${SERVER_ROOT}/api/me`, {
         headers: {
             'Authorization': `Bearer ${accessToken}`}
@@ -63,7 +65,6 @@ export const fetchQuestions = () => dispatch => {
             throw new Error(res.statusText);
         }
         return res.json();
-        console.log(res.json())
     }).then(questions => {
         dispatch(fetchSuccess(questions))
     }).catch(error => dispatch(fetchError(error)));
