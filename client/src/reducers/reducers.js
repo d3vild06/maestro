@@ -8,7 +8,9 @@ const initialState = {
 
 export const appReducer = (state = initialState, action) => {
   if (action.type === 'FETCH_SUCCESS') {
-    let questionArray = action.questions;
+    let questionArray = action.questions.questions;
+    // let question = action.questions[0].question
+    // console.log(action.questions)
     state = Object.assign({}, state, {questions:questionArray})
     return state;
   }
