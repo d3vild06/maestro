@@ -8,6 +8,7 @@ const userSchema = Schema({
   lastName: String,
   displayName: String,
   email: String,
+  token: String
 });
 
 userSchema.plugin(findOrCreate);

@@ -19,7 +19,7 @@ export const appReducer = (state = initialState, action) => {
     // let firstQuestion = action.questions.questions[0].question
     // console.log(firstQuestion)
     // let question = action.questions[0].question
-    // console.log(action.questions)
+  // console.log(action.questions)
     state = Object.assign({}, state, {questions:action.questions} )
     return state;
   }
