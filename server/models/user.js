@@ -22,3 +22,13 @@ const userSchema = Schema({
 
 userSchema.plugin(findOrCreate);
 module.exports = mongoose.model('User', userSchema);
+
+
+/*
+
+
+
+
+
+
+*/
