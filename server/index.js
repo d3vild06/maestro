@@ -84,12 +84,28 @@ app.get('/api/me',
     })
 );
 // { userId: googleId, questions: []}
-app.post('/api/batchanswers', passport.authenticate('bearer', {session: false}), (req, res) => {
-  const { userId, questions } = req.body;
+app.post('/api/submitanswers', passport.authenticate('bearer', {session: false}), (req, res) => {
+  const { userId, questions, totalCorrect } = req.body; // questions should be an array of question objects. Each question object must have the following shape {id:, mValue:, correctCount:, dateAnswered:}
+  console.log('userId: ', userId);
+  console.log('questions : ', questions);
   if (!userId || !questions) {
     res.status(400).json({success: false, message: 'missing fields'})
   }
-  User.find({googleId: userId})
+  Promise.all(questions.map(question => {
+    return User.findOneAndUpdate({googleId: userId},
+      { $push: { previousQuestions: question }},
+      { upsert: true }).exec();
+  }))
+  .then(() => {
+    User.findOneAndUpdate({googleId: userId},
+      { $inc: {totalCorrectQuestions: totalCorrect}},
+      { new: true, fields: 'totalCorrectQuestions'}).exec();
+  })
+  .then(totalCorrect => res.status(201).json({success: true, totalCorrect: totalCorrect}))
+  .catch(error => {
+    console.log(error);
+    res.status(500).json({success: false, message: 'Internal Server Error: Unable to update user'})
+  });
 });
 
 app.get('/api/questions', passport.authenticate('bearer', {session: false}), (req, res) => {
