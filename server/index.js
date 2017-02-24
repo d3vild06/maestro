@@ -3,8 +3,11 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 require('dotenv').config();
 const User = require('./models/user');
+const Question = require('./models/question');
+const bodyParser = require('body-parser');
 
 const config = require('./config');
 const app = express();
@@ -19,6 +22,8 @@ app.use(function(req, res, next) {
 });
 
 app.use(passport.initialize());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 passport.use(
     new GoogleStrategy({
@@ -78,11 +83,50 @@ app.get('/api/me',
         googleId: req.user.googleId
     })
 );
+// { userId: googleId, questions: []}
+app.post('/api/submitanswers', passport.authenticate('bearer', {session: false}), (req, res) => {
+  const { userId, questions, totalCorrect } = req.body; // questions should be an array of question objects. Each question object must have the following shape {id:, mValue:, correctCount:, dateAnswered:}
+  console.log('userId: ', userId);
+  console.log('questions : ', questions);
+  if (!userId || !questions) {
+    res.status(400).json({success: false, message: 'missing fields'})
+  }
+  Promise.all(questions.map(question => {
+    return User.findOneAndUpdate({googleId: userId},
+      { $push: { previousQuestions: question }},
+      { upsert: true }).exec();
+  }))
+  .then(() => {
+    User.findOneAndUpdate({googleId: userId},
+      { $inc: {totalCorrectQuestions: totalCorrect}},
+      { new: true, fields: 'totalCorrectQuestions'}).exec();
+  })
+  .then(totalCorrect => res.status(201).json({success: true, totalCorrect: totalCorrect}))
+  .catch(error => {
+    console.log(error);
+    res.status(500).json({success: false, message: 'Internal Server Error: Unable to update user'})
+  });
+});
 
-app.get('/api/questions',
-    passport.authenticate('bearer', {session: false}),
-    (req, res) => res.json(['Question 1', 'Question 2'])
-);
+app.get('/api/questions', passport.authenticate('bearer', {session: false}), (req, res) => {
+      Question.find({})
+      .exec()
+      .then(questions => res.status(200).json({success: true, questions: questions.map(question => question)}))
+      .catch(error => res.status(500).json({success: false, message: 'Oops. Unable to retrieve questions'}))
+});
+
+app.post('/api/questions', passport.authenticate('bearer', {session: false}), (req, res) => {
+  const { question, answer } = req.body;
+  if (!question || !answer) {
+    res.status(400).json({success: false, message: 'missing fields'});
+  }
+  Question.create({
+    question,
+    answer
+  })
+  .then(question => res.json({success: true, question: question}))
+  .catch(error => res.status(500).json({success: false, message: 'Internal Server Error'}));
+});
 
 let server;
 function runServer(dbUrl, host, port) {
