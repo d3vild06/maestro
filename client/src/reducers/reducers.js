@@ -1,6 +1,7 @@
 const initialState = {
   displayName: '',
   questions: [],
+  finalQuestions: [],
   currentUser: null,
   // nextQuestion: 0,
   sessionEnded: false,
@@ -27,10 +28,15 @@ export const appReducer = (state = initialState, action) => {
     state = Object.assign({}, state, {nextQuestion: state.questions[0].question})
     console.log(state.questions)
   }
-  // if (action.type === 'ANSWER_SUBMIT') {
-  //   let answer = actions.answer;
-  //     answer === this.state.nextQuestion.answer ? state = Object.assign({}, state, {})
-  //       state = Object.
-  // }
+  if (action.type === 'SUBMIT_USER_ANSWER') {
+    return [
+      {
+        questions: action.questions,
+        finalQuestions: action.finalQuestions
+      },
+      ...state
+    ]
+  }
+
   return state;
 };

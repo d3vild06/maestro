@@ -1,6 +1,7 @@
 import 'isomorphic-fetch'
 import {SERVER_ROOT} from '../config';
 import * as Cookies from 'js-cookie';
+import generateNextQuestion from '../utils/generateNextQuestion';
 
 export const FETCH_SUCCESS = 'FETCH_SUCCESS';
 export const fetchSuccess = (questions) => ({type: FETCH_SUCCESS, questions});
@@ -14,11 +15,6 @@ export const fetchSuccessCurrentUser = (currentUser) => ({type: FETCH_SUCCESS_CU
 export const FETCH_ERROR_CURRENT_USER = 'FETCH_ERROR_CURRENT_USER'
 export const fetchErrorCurrentUser = (currentUser, error) => ({type: FETCH_ERROR_CURRENT_USER, currentUser, error})
 
-export const ANSWER_SUBMIT = 'ANSWER_SUBMIT'
-export const answerSubmit = (answer) => ({type: ANSWER_SUBMIT, answer})
-
-export const SET_CURRENT_QUESTION = 'SET_CURRENT_QUESTION'
-export const setnextQuestion = () => (console.log('something'))
 // export const postAnswer = answer => dispatch => {
 //   fetch(`${SERVER_ROOT}/api/questions`,
 //     {method: 'POST', body.JSON.stringify({answer}),
@@ -27,7 +23,18 @@ export const setnextQuestion = () => (console.log('something'))
 //     }
 //   })
 // }
+export const SUBMIT_USER_ANSWER = 'SUBMIT_USER_ANSWER';
+export const submitUserAnswer = (currentQuestion, isCorrect, getState) => {
+  const { questions, finalQuestions } = getState();
+  console.log('questions: ', questions);
+  const { questionsArray, finalQuestionsArray } = generateNextQuestion(currentQuestion, questions, finalQuestions, isCorrect);
 
+  return {
+    type: SUBMIT_USER_ANSWER,
+    questions: questionsArray,
+    finalQuestions: finalQuestionsArray
+  }
+}
 
 export const fetchCurrentUser = () => (dispatch, getState) => {
     const accessToken = Cookies.get('accessToken')
