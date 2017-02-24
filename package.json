@@ -13,5 +13,8 @@
   "dependencies": {
     "mongoose": "^4.8.4",
     "npm-run-all": "^4.0.1"
+  },
+  "devDependencies": {
+    "redux-logger": "^2.8.1"
   }
 }

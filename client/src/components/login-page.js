@@ -2,9 +2,9 @@ import React from 'react';
 import {SERVER_ROOT} from '../config';
 
 export default class LoginPage extends React.Component {
-  constructor() {
-  super()
-}
+//   constructor() {
+//   super()
+// }
 
 render() {
   return(

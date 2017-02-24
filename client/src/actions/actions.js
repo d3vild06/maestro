@@ -17,7 +17,8 @@ export const fetchErrorCurrentUser = (currentUser, error) => ({type: FETCH_ERROR
 export const ANSWER_SUBMIT = 'ANSWER_SUBMIT'
 export const answerSubmit = (answer) => ({type: ANSWER_SUBMIT, answer})
 
-
+export const SET_CURRENT_QUESTION = 'SET_CURRENT_QUESTION'
+export const setnextQuestion = () => (console.log('something'))
 // export const postAnswer = answer => dispatch => {
 //   fetch(`${SERVER_ROOT}/api/questions`,
 //     {method: 'POST', body.JSON.stringify({answer}),
@@ -30,8 +31,6 @@ export const answerSubmit = (answer) => ({type: ANSWER_SUBMIT, answer})
 
 export const fetchCurrentUser = () => (dispatch, getState) => {
     const accessToken = Cookies.get('accessToken')
-        const {currentUser} = getState();
-        console.log(currentUser)
     fetch(`${SERVER_ROOT}/api/me`, {
         headers: {
             'Authorization': `Bearer ${accessToken}`}
@@ -66,7 +65,7 @@ export const fetchQuestions = () => dispatch => {
         }
         return res.json();
     }).then(questions => {
-        dispatch(fetchSuccess(questions))
+        dispatch(fetchSuccess(questions.questions))
     }).catch(error => dispatch(fetchError(error)));
 
 };

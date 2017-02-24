@@ -7,10 +7,6 @@ import LoginPage from './login-page';
 import {connect} from 'react-redux';
 
 export class App extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
 
     componentDidMount() {
         // Job 4: Redux-ify all of the state and fetch calls to async actions.
@@ -19,28 +15,7 @@ export class App extends React.Component {
             this.props.dispatch(actions.fetchCurrentUser()
           );
         }
-            // fetch(`${SERVER_ROOT}/api/me`, {
-            //     headers: {
-            //         'Authorization': `Bearer ${accessToken}`
-            //     }
-            // }).then(res => {
-            //     if (!res.ok) {
-            //         if (res.status !== 401) {
-            //             // Unauthorized, clear the cookie and go to
-            //             // the login page
-            //             Cookies.remove('accessToken');
-            //             return;
-            //         }
-            //         throw new Error(res.statusText);
-            //     }
-            //     return res.json();
-            // }).then(currentUser =>
-            //     this.setState({
-            //         currentUser
-                // })
-            // );
         }
-
 
     render() {
         if (!this.props.currentUser) {
