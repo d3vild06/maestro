@@ -10,12 +10,13 @@ const initialState = {
   lastQuestionObj: {},
   userScore: 0,
   questionCounter: 1,
+  message: '',
 };
 
 export const appReducer = (state = initialState, action) => {
   if (action.type === 'FETCH_SUCCESS') {
     state = Object.assign({}, state, {questions:action.questions, isFetched: true} )
-    return state;
+  return state;
   }
   if (action.type === 'FETCH_SUCCESS_CURRENT_USER') {
       let user = action.currentUser;
@@ -27,10 +28,12 @@ export const appReducer = (state = initialState, action) => {
     state = Object.assign({}, state, {nextQuestion: state.questions[0].question})
     console.log(state.questions)
   }
-  // if (action.type === 'ANSWER_SUBMIT') {
-  //   let answer = actions.answer;
-  //     answer === this.state.nextQuestion.answer ? state = Object.assign({}, state, {})
-  //       state = Object.
-  // }
+  if (action.type === 'ANSWER_SUBMIT') {
+    let answer = action.answer;
+        state = Object.assign({}, state, {submittedAnswer: answer, isFetched:true})
+  }
+  if (action.type ===  'UPDATE_MESSAGE') {
+        state = Object.assign({}, state, {message: action.message})
+  }
   return state;
 };

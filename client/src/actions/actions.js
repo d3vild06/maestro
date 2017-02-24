@@ -17,8 +17,9 @@ export const fetchErrorCurrentUser = (currentUser, error) => ({type: FETCH_ERROR
 export const ANSWER_SUBMIT = 'ANSWER_SUBMIT'
 export const answerSubmit = (answer) => ({type: ANSWER_SUBMIT, answer})
 
-export const SET_CURRENT_QUESTION = 'SET_CURRENT_QUESTION'
-export const setnextQuestion = () => (console.log('something'))
+export const UPDATE_MESSAGE = 'UPDATE_MESSAGE'
+export const updateMessage = (message) => ({type: UPDATE_MESSAGE, message })
+
 // export const postAnswer = answer => dispatch => {
 //   fetch(`${SERVER_ROOT}/api/questions`,
 //     {method: 'POST', body.JSON.stringify({answer}),
